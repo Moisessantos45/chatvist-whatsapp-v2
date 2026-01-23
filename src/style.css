@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  /* Base colors */
+  --color-border: hsl(214.3 31.8% 91.4%);
+  --color-input: hsl(214.3 31.8% 91.4%);
+  --color-ring: hsl(222.2 84% 4.9%);
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(222.2 84% 4.9%);
+  
+  /* Primary colors */
+  --color-primary: hsl(222.2 47.4% 11.2%);
+  --color-primary-foreground: hsl(210 40% 98%);
+  
+  /* Secondary colors */
+  --color-secondary: hsl(210 40% 96%);
+  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
+  
+  /* Destructive colors */
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+  
+  /* Muted colors */
+  --color-muted: hsl(210 40% 96%);
+  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
+  
+  /* Accent colors */
+  --color-accent: hsl(210 40% 96%);
+  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
+  
+  /* Popover colors */
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(222.2 84% 4.9%);
+  
+  /* Card colors */
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(222.2 84% 4.9%);
+  
+  /* Sidebar colors */
+  --color-sidebar: hsl(0 0% 98%);
+  --color-sidebar-foreground: hsl(240 5.3% 26.1%);
+  --color-sidebar-primary: hsl(240 5.9% 10%);
+  --color-sidebar-primary-foreground: hsl(0 0% 98%);
+  --color-sidebar-accent: hsl(240 4.8% 95.9%);
+  --color-sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --color-sidebar-border: hsl(220 13% 91%);
+  --color-sidebar-ring: hsl(217.2 10.6% 64.9%);
+  
+  /* WhatsApp specific colors */
+  --color-whatsapp-gray: #969696;
+  --color-whatsapp-dark-blue: #004a98;
+  --color-whatsapp-sky-blue: #00b2e3;
+  --color-whatsapp-light-gray: #d8d8d8;
+  --color-whatsapp-medium-blue: #2080cb;
+  
+  /* Chat colors */
+  --color-chat-bg: hsl(220 14% 96%);
+  --color-chat-sidebar: hsl(0 0% 100%);
+  --color-chat-message-sent: hsl(120 93% 79%);
+  --color-chat-message-received: hsl(0 0% 100%);
+  --color-chat-message-received-alt: hsl(220 14% 96%);
+  
+  /* Background images/gradients */
+  --background-image-gradient-auth: linear-gradient(135deg, #004a98 0%, #2080cb 100%);
+  --background-image-gradient-button: linear-gradient(135deg, #00b2e3 0%, #2080cb 100%);
+  
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}

@@ -73,7 +73,7 @@
 
                 <!-- Nombre del usuario (solo para mensajes de otros) -->
                 <div v-if="message.usuarioId !== user.id" class="text-xs font-semibold text-whatsapp-medium-blue mb-1">
-                  {{ message.usuario?.nombre || 'Desconocido' }}
+                  {{ message.senderApodo || message.usuario?.nombre || 'Desconocido' }}
                 </div>
 
                 <!-- Contenido del mensaje -->
@@ -122,7 +122,8 @@
                 <Reply class="w-4 h-4 text-whatsapp-medium-blue" />
                 <div class="text-sm">
                   <p class="font-medium text-gray-700">
-                    Respondiendo a {{ getRepliedMessage(replyingToMessage)?.usuario.nombre ?? 'Usuario desconocido' }}
+                    Respondiendo a {{ getRepliedMessage(replyingToMessage)?.senderApodo ||
+                      getRepliedMessage(replyingToMessage)?.usuario?.nombre || 'Usuario desconocido' }}
                   </p>
                   <p class="text-gray-500 truncate max-w-xs">
                     {{ getRepliedMessage(replyingToMessage)?.contenido }}

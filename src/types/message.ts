@@ -7,6 +7,8 @@ interface Message {
   grupoId: number;
   usuarioId: number;
   respuestaId?: number;
+  senderName?: string;
+  senderApodo?: string;
 
   usuario: User;
 }
@@ -18,6 +20,8 @@ const initializedMessageState = {
   grupoId: 0,
   usuarioId: 0,
   respuestaId: undefined,
+  senderName: undefined,
+  senderApodo: undefined,
 
   usuario: { ...initializedUserState },
 };

@@ -44,132 +44,150 @@
       </div>
 
       <!-- Área de mensajes -->
-      <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50 chat-background">
-        <div class="space-y-4">
-          <div v-for="message in messages" :key="message.id" :class="[
-            'flex',
-            message.usuarioId === user.id ? 'justify-end' : 'justify-start'
-          ]">
-            <div :class="[
-              'max-w-[70%] rounded-lg p-3 shadow-sm relative group',
-              message.usuarioId === user.id
-                ? 'bg-whatsapp-sky-blue text-white'
-                : 'bg-white text-gray-800',
-              isReplyingToMessage(message.id) ? 'ring-2 ring-whatsapp-medium-blue' : ''
+      <div class="flex-1 relative flex flex-col overflow-hidden bg-gray-50 chat-background">
+        <div ref="messagesContainer" @scroll="handleScroll" class="flex-1 overflow-y-auto p-4">
+          <div class="space-y-4">
+            <div v-for="message in messages" :key="message.id" :class="[
+              'flex',
+              message.usuarioId === user.id ? 'justify-end' : 'justify-start'
             ]">
-              <!-- Mensaje al que se está respondiendo -->
-              <div v-if="message.respuestaId && message.respuestaId > 0"
-                class="mb-2 p-2 rounded bg-black/10 border-l-4 border-whatsapp-medium-blue">
-                <div v-if="getRepliedMessage(message.respuestaId)" class="text-xs">
-                  <p class="opacity-70 truncate">
-                    {{ getRepliedMessage(message.respuestaId)?.contenido }}
+              <div :class="[
+                'max-w-[70%] rounded-lg p-3 shadow-sm relative group',
+                message.usuarioId === user.id
+                  ? 'bg-whatsapp-sky-blue text-white'
+                  : 'bg-white text-gray-800',
+                isReplyingToMessage(message.id) ? 'ring-2 ring-whatsapp-medium-blue' : ''
+              ]">
+                <!-- Mensaje al que se está respondiendo -->
+                <div v-if="message.respuestaId && message.respuestaId > 0"
+                  class="mb-2 p-2 rounded bg-black/10 border-l-4 border-whatsapp-medium-blue">
+                  <div v-if="getRepliedMessage(message.respuestaId)" class="text-xs">
+                    <p class="opacity-70 truncate">
+                      {{ getRepliedMessage(message.respuestaId)?.contenido }}
+                    </p>
+                  </div>
+                  <div v-else class="text-xs opacity-70">
+                    <p>Mensaje eliminado</p>
+                  </div>
+                </div>
+
+                <!-- Nombre del usuario (solo para mensajes de otros) -->
+                <div v-if="message.usuarioId !== user.id" class="text-xs font-semibold text-whatsapp-medium-blue mb-1">
+                  {{ message.usuario?.nombre || 'Desconocido' }}
+                </div>
+
+                <!-- Contenido del mensaje -->
+                <p class="text-sm leading-relaxed">{{ message.contenido }}</p>
+
+                <!-- Botón de respuesta (aparece al hover) -->
+                <button @click="replyToMessage(message.id)"
+                  class="absolute top-2 right-2 p-1 rounded-full bg-black/20 hover:bg-black/30 transition-all opacity-0 group-hover:opacity-100">
+                  <Reply class="w-4 h-4 text-white" />
+                </button>
+
+                <div class="flex items-center justify-end mt-1">
+                  <span :class="[
+                    'text-xs',
+                    message.usuarioId === user.id ? 'text-white/70' : 'text-whatsapp-gray'
+                  ]">
+                    {{ formaterDate(message.fecha) }}
+                  </span>
+                  <Check v-if="message.usuarioId === user.id" :class="[
+                    'w-4 h-4 ml-1',
+                    true ? 'text-blue-200' : 'text-white/70'
+                  ]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón flotante para ir al final -->
+          <button v-if="showScrollButton" @click="scrollToBottom"
+            class="absolute bottom-4 right-4 z-10 p-3 rounded-full bg-white shadow-lg border border-gray-200 text-gray-600 hover:text-whatsapp-medium-blue hover:bg-gray-50 transition-all flex items-center justify-center group"
+            aria-label="Ir al último mensaje">
+            <ChevronDown class="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <span v-if="unreadCount > 0"
+              class="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {{ unreadCount > 99 ? '99+' : unreadCount }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Input area -->
+        <div class="bg-white border-t border-gray-200">
+          <!-- Indicador de respuesta -->
+          <div v-if="replyingToMessage" class="px-4 py-2 bg-gray-100 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <Reply class="w-4 h-4 text-whatsapp-medium-blue" />
+                <div class="text-sm">
+                  <p class="font-medium text-gray-700">
+                    Respondiendo a {{ getRepliedMessage(replyingToMessage)?.usuario.nombre ?? 'Usuario desconocido' }}
+                  </p>
+                  <p class="text-gray-500 truncate max-w-xs">
+                    {{ getRepliedMessage(replyingToMessage)?.contenido }}
                   </p>
                 </div>
-                <div v-else class="text-xs opacity-70">
-                  <p>Mensaje eliminado</p>
-                </div>
               </div>
+              <button @click="cancelReply" class="p-1 rounded-full hover:bg-gray-200 transition-colors">
+                <X class="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+          </div>
 
-              <!-- Contenido del mensaje -->
-              <p class="text-sm leading-relaxed">{{ message.contenido }}</p>
-
-              <!-- Botón de respuesta (aparece al hover) -->
-              <button @click="replyToMessage(message.id)"
-                class="absolute top-2 right-2 p-1 rounded-full bg-black/20 hover:bg-black/30 transition-all opacity-0 group-hover:opacity-100">
-                <Reply class="w-4 h-4 text-white" />
+          <div class="p-4">
+            <div class="flex items-end space-x-3">
+              <button class="p-2 rounded-full hover:bg-gray-100 transition-colors mb-1">
+                <Paperclip class="w-5 h-5 text-whatsapp-gray" />
               </button>
 
-              <div class="flex items-center justify-end mt-1">
-                <span :class="[
-                  'text-xs',
-                  message.usuarioId === user.id ? 'text-white/70' : 'text-whatsapp-gray'
-                ]">
-                  {{ formaterDate(message.fecha) }}
-                </span>
-                <Check v-if="message.usuarioId === user.id" :class="[
-                  'w-4 h-4 ml-1',
-                  true ? 'text-blue-200' : 'text-white/70'
-                ]" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Input area -->
-      <div class="bg-white border-t border-gray-200">
-        <!-- Indicador de respuesta -->
-        <div v-if="replyingToMessage" class="px-4 py-2 bg-gray-100 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <Reply class="w-4 h-4 text-whatsapp-medium-blue" />
-              <div class="text-sm">
-                <p class="font-medium text-gray-700">
-                  Respondiendo a {{ getRepliedMessage(replyingToMessage)?.usuario.nombre ?? 'Usuario desconocido' }}
-                </p>
-                <p class="text-gray-500 truncate max-w-xs">
-                  {{ getRepliedMessage(replyingToMessage)?.contenido }}
-                </p>
-              </div>
-            </div>
-            <button @click="cancelReply" class="p-1 rounded-full hover:bg-gray-200 transition-colors">
-              <X class="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-        </div>
-
-        <div class="p-4">
-          <div class="flex items-end space-x-3">
-            <button class="p-2 rounded-full hover:bg-gray-100 transition-colors mb-1">
-              <Paperclip class="w-5 h-5 text-whatsapp-gray" />
-            </button>
-
-            <div class="flex-1 relative">
-              <!-- Lista de menciones -->
-              <div v-if="showMentionList && filteredUsers.length > 0"
-                class="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-10">
-                <div v-for="(user, index) in filteredUsers" :key="user.id" @click="selectMention(user)" :class="[
-                  'px-4 py-2 cursor-pointer flex items-center space-x-2',
-                  index === selectedMentionIndex ? 'bg-whatsapp-sky-blue text-white' : 'hover:bg-gray-100'
-                ]">
-                  <div
-                    class="w-8 h-8 rounded-full bg-gradient-to-br from-whatsapp-medium-blue to-whatsapp-sky-blue flex items-center justify-center text-white text-sm font-semibold">
-                    {{ user.nombre.charAt(0).toUpperCase() }}
+              <div class="flex-1 relative">
+                <!-- Lista de menciones -->
+                <div v-if="showMentionList && filteredUsers.length > 0"
+                  class="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-10">
+                  <div v-for="(user, index) in filteredUsers" :key="user.id" @click="selectMention(user)" :class="[
+                    'px-4 py-2 cursor-pointer flex items-center space-x-2',
+                    index === selectedMentionIndex ? 'bg-whatsapp-sky-blue text-white' : 'hover:bg-gray-100'
+                  ]">
+                    <div
+                      class="w-8 h-8 rounded-full bg-gradient-to-br from-whatsapp-medium-blue to-whatsapp-sky-blue flex items-center justify-center text-white text-sm font-semibold">
+                      {{ user.nombre.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="text-sm">{{ user.nombre }}</span>
                   </div>
-                  <span class="text-sm">{{ user.nombre }}</span>
                 </div>
-              </div>
 
-              <textarea ref="textareaRef" v-model="message.contenido"
-                @input="(e) => { handleInput(e); adjustTextareaHeight(); }" @keydown="handleKeyDown"
-                placeholder="Escribe un mensaje..." rows="1"
-                class="w-full px-4 py-2 bg-gray-100 rounded-lg border-none focus:ring-2 focus:ring-whatsapp-medium-blue focus:outline-none transition-all resize-none overflow-hidden"
-                style="min-height: 40px; max-height: 120px;">
+                <textarea ref="textareaRef" v-model="message.contenido"
+                  @input="(e) => { handleInput(e); adjustTextareaHeight(); }" @keydown="handleKeyDown"
+                  placeholder="Escribe un mensaje..." rows="1"
+                  class="w-full px-4 py-2 bg-gray-100 rounded-lg border-none focus:ring-2 focus:ring-whatsapp-medium-blue focus:outline-none transition-all resize-none overflow-hidden"
+                  style="min-height: 40px; max-height: 120px;">
               </textarea>
 
-              <button
-                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-200 transition-colors">
-                <Smile class="w-5 h-5 text-whatsapp-gray" />
+                <button
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-200 transition-colors">
+                  <Smile class="w-5 h-5 text-whatsapp-gray" />
+                </button>
+              </div>
+
+              <button @click="handleSendMessage" :disabled="!message.contenido.trim()" :class="[
+                'p-3 rounded-full transition-all duration-200 transform mb-1',
+                message.contenido.trim()
+                  ? 'bg-whatsapp-dark-blue text-white hover:bg-whatsapp-medium-blue hover:scale-105 shadow-lg'
+                  : 'bg-gray-200 text-whatsapp-gray cursor-not-allowed'
+              ]">
+                <Send class="w-5 h-5" />
               </button>
             </div>
-
-            <button @click="handleSendMessage" :disabled="!message.contenido.trim()" :class="[
-              'p-3 rounded-full transition-all duration-200 transform mb-1',
-              message.contenido.trim()
-                ? 'bg-whatsapp-dark-blue text-white hover:bg-whatsapp-medium-blue hover:scale-105 shadow-lg'
-                : 'bg-gray-200 text-whatsapp-gray cursor-not-allowed'
-            ]">
-              <Send class="w-5 h-5" />
-            </button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal de opciones del chat -->
-    <ChatOptionsModal :show="showChatOptionsModal" :group-code="cluster.clave" :group-name="cluster.nombre"
-      @close="showChatOptionsModal = false" @share-group-code="handleShareGroupCode" @add-member="handleAddMember"
-      @view-info="handleViewInfo" />
+      <!-- Modal de opciones del chat -->
+      <ChatOptionsModal :show="showChatOptionsModal" :group-code="cluster.clave" :group-name="cluster.nombre"
+        @close="showChatOptionsModal = false" @share-group-code="handleShareGroupCode" @add-member="handleAddMember"
+        @view-info="handleViewInfo" />
+    </div>
   </div>
 </template>
 
@@ -186,7 +204,8 @@ import {
   Send,
   Check,
   Reply,
-  X
+  X,
+  ChevronDown
 } from 'lucide-vue-next'
 import useClusterStore from '@/stores/cluster'
 import useUserStore from '@/stores/user'
@@ -219,6 +238,24 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const showMentionList = ref(false)
 const mentionSearch = ref('')
 const mentionStartPos = ref(0)
+
+const isAtBottom = ref(true)
+const showScrollButton = ref(false)
+const unreadCount = ref(0)
+
+const handleScroll = () => {
+  if (!messagesContainer.value) return
+
+  const { scrollTop, scrollHeight, clientHeight } = messagesContainer.value
+  const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+
+  isAtBottom.value = distanceFromBottom < 100
+  showScrollButton.value = distanceFromBottom >= 100
+
+  if (isAtBottom.value) {
+    unreadCount.value = 0
+  }
+}
 
 // Methods
 const handleSendMessage = async () => {
@@ -367,8 +404,24 @@ const handleViewInfo = () => {
   showChatOptionsModal.value = false
 }
 
+// Watch for messages to add smart auto-scroll
+watch(() => messages.value.length, (newLen, oldLen) => {
+  if (newLen > oldLen && newLen > 0) {
+    const lastMessage = messages.value[newLen - 1]
+
+    if (isAtBottom.value || lastMessage.usuarioId === user.value.id) {
+      nextTick(() => {
+        scrollToBottom()
+      })
+    } else if (lastMessage.usuarioId !== user.value.id) {
+      unreadCount.value++
+    }
+  }
+})
+
 // Watch for selectedChat changes to scroll to bottom
 watch(() => cluster.value, () => {
+  unreadCount.value = 0
   nextTick(() => {
     scrollToBottom()
   })

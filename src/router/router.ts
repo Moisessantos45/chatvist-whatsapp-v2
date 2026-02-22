@@ -20,9 +20,9 @@ const routes = [
     path: "/chat",
     name: "Dashboard",
     component: () => import("../views/Dashboard.vue"),
-    // meta: {
-    //   requiresAuth: true,
-    // },
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 
@@ -31,12 +31,17 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, _, next) => {
-//   if (to.meta.requiresAuth) {
-//     next({ name: "Login" });
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, _, next) => {
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem("bearerToken");
+    if (!token) {
+      next({ name: "Login" });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 export default router;

@@ -6,6 +6,8 @@ import { mapToJsonEntityUser } from "../mappers/user";
 import notification from "@/service/notification";
 import type { Message } from "@/types/message";
 
+import router from "@/router/router";
+
 const useUserStore = defineStore("user", () => {
   const api = import.meta.env.VITE_HOST_API;
   const user = ref<User>({ ...initializedUserState });
@@ -38,14 +40,14 @@ const useUserStore = defineStore("user", () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
           },
-        }
+        },
       );
       resetUser();
       localStorage.removeItem("bearerToken");
     } catch (error) {
       notification(
         "Error al cerrar sesión. Por favor, intenta nuevamente.",
-        "error"
+        "error",
       );
     }
   };
@@ -65,6 +67,9 @@ const useUserStore = defineStore("user", () => {
       user.value = mapToJsonEntityUser(data.data);
     } catch (error) {
       console.log("Get user error:", error);
+      resetUser();
+      localStorage.removeItem("bearerToken");
+      router.push({ name: "Login" });
     }
   };
 
@@ -84,7 +89,7 @@ const useUserStore = defineStore("user", () => {
     } catch (error) {
       notification(
         "Error en el registro. Por favor, intenta nuevamente.",
-        "error"
+        "error",
       );
       return false;
     }
@@ -126,7 +131,7 @@ const useUserStore = defineStore("user", () => {
       (userItem: any) =>
         userItem.nombre &&
         userItem.nombre.trim() &&
-        userItem.nombre.toLowerCase().includes(search)
+        userItem.nombre.toLowerCase().includes(search),
     );
     selectedMentionIndex.value = 0;
   };

@@ -3,19 +3,25 @@ import { mapToJsonEntityUser } from "./user";
 import { initializedUserState } from "@/types/user";
 
 const mapToJsonEntityMessage = (data: { [key: string]: any }): Message => {
-  return {
-    id: data["id"] ?? 0,
-    contenido: data["contenido"] ?? "",
-    fecha: new Date(data["fecha"]) ?? new Date(),
-    grupoId: data["grupoId"] ?? 0,
-    usuarioId: data["usuarioId"] ?? 0,
-    respuestaId: data["respuestaId"] ?? undefined,
-    senderName: data["senderName"] ?? undefined,
-    senderApodo: data["senderApodo"] ?? undefined,
+  const rawFecha = data["fecha"];
+  const parsedFecha = rawFecha ? new Date(rawFecha) : new Date();
 
-    usuario: mapToJsonEntityUser(data["usuario"]) ?? {
-      ...initializedUserState,
-    },
+  return {
+    id: Number(data["id"]) || 0,
+    contenido: data["contenido"]?.toString() ?? "",
+    fecha: isNaN(parsedFecha.getTime()) ? new Date() : parsedFecha,
+    grupoId: Number(data["grupoId"]) || 0,
+    usuarioId: Number(data["usuarioId"]) || 0,
+    respuestaId:
+      data["respuestaId"] != null ? Number(data["respuestaId"]) : undefined,
+    senderName: data["senderName"]?.toString() ?? undefined,
+    senderApodo: data["senderApodo"]?.toString() ?? undefined,
+
+    usuario: data["usuario"]
+      ? mapToJsonEntityUser(data["usuario"])
+      : {
+          ...initializedUserState,
+        },
   };
 };
 

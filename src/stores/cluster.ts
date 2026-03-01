@@ -16,7 +16,7 @@ const useClusterStore = defineStore("cluster", () => {
   const getAllClustersUser = async () => {
     try {
       const { data } = await axios.get(
-        `${api}/api/grupo/usuario/${user.value.id}`,
+        `${api}/api/group/user/${user.value.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
@@ -25,6 +25,7 @@ const useClusterStore = defineStore("cluster", () => {
       );
 
       console.log("Get all clusters success:", data);
+      if(!data?.data) return;
 
       clusters.value = data.data.map(mapToJsonEntityCluster);
     } catch (error) {

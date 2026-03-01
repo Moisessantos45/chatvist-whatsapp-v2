@@ -14,21 +14,23 @@ const useMessageStore = defineStore("message", () => {
   const webSocketStore = useWebSocketStore();
   const userStore = useUserStore();
   const { user } = storeToRefs(userStore);
-  
+
   // Variables para respuestas
   const replyingToMessage = ref<number | null>(null);
 
   const getAllMessagesCluster = async (id: number) => {
     try {
-      const { data } = await axios.get(`${api}/api/mensaje/grupo/${id}`, {
+      const { data } = await axios.get(`${api}/api/mensaje/group/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
         },
       });
 
       console.log("Get all messages success:", data);
+      if (!data?.data) return;
 
       messages.value = data.data.map(mapToJsonEntityMessage);
+      console.log("Messages:", messages.value);
     } catch (error) {
       console.log("Get all messages error:", error);
     }
@@ -73,7 +75,7 @@ const useMessageStore = defineStore("message", () => {
   };
 
   const getRepliedMessage = (respuestaId: number) => {
-    return messages.value.find(msg => msg.id === respuestaId);
+    return messages.value.find((msg) => msg.id === respuestaId);
   };
 
   const isReplyingToMessage = (messageId: number) => {
@@ -83,10 +85,10 @@ const useMessageStore = defineStore("message", () => {
   // Función mejorada para enviar mensaje con respuesta
   const sendMessage = async (clusterId: number, clusterKey: string) => {
     if (!message.value.contenido.trim() || !clusterKey) return false;
-    
+
     message.value.usuarioId = user.value.id;
     message.value.grupoId = clusterId;
-    
+
     // Si estamos respondiendo a un mensaje, agregar el respuestaId
     if (replyingToMessage.value) {
       message.value.respuestaId = replyingToMessage.value;
@@ -96,7 +98,7 @@ const useMessageStore = defineStore("message", () => {
 
     // Limpiar el estado de respuesta
     replyingToMessage.value = null;
-    
+
     return true;
   };
 

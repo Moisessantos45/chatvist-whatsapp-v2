@@ -18,23 +18,30 @@ const useUserStore = defineStore("user", () => {
   const filteredUsers = ref<any[]>([]);
   const selectedMentionIndex = ref(0);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const { data } = await axios.post(`${api}/api/public/login`, {
         email,
         password,
       });
       user.value = mapToJsonEntityUser(data.data);
-      localStorage.setItem("bearerToken", data.data.token);
+      const token = data.data.token ?? data.data.Token ?? "";
+      localStorage.setItem("bearerToken", token);
+      return true;
     } catch (error) {
       console.log("Login error:", error);
+      notification(
+        "Error al iniciar sesión. Verifica tus credenciales.",
+        "error",
+      );
+      return false;
     }
   };
 
   const logout = async () => {
     try {
       await axios.post(
-        `${api}/public/logout`,
+        `${api}/api/public/logout`,
         {},
         {
           headers: {
@@ -42,13 +49,11 @@ const useUserStore = defineStore("user", () => {
           },
         },
       );
+    } catch (error) {
+      console.log("Logout error:", error);
+    } finally {
       resetUser();
       localStorage.removeItem("bearerToken");
-    } catch (error) {
-      notification(
-        "Error al cerrar sesión. Por favor, intenta nuevamente.",
-        "error",
-      );
     }
   };
 
@@ -57,10 +62,16 @@ const useUserStore = defineStore("user", () => {
   };
 
   const getUser = async () => {
+    const token = localStorage.getItem("bearerToken");
+    if (!token) {
+      resetUser();
+      router.push({ name: "Login" });
+      return;
+    }
     try {
-      const { data } = await axios.get(`${api}/api/usuario/token`, {
+      const { data } = await axios.get(`${api}/api/user/token`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log("Get user successful:", data.data);

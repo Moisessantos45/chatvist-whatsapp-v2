@@ -14,7 +14,7 @@ const useUserGroupStore = defineStore("userGroup", () => {
 
   const getAllGroupsUser = async () => {
     try {
-      const response = await axios.get(`${api}/api/grupo-usuario`, {
+      const response = await axios.get(`${api}/api/group-user`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
         },
@@ -31,7 +31,7 @@ const useUserGroupStore = defineStore("userGroup", () => {
 
     try {
       await axios.post(
-        `${api}/api/grupo-usuario/add`,
+        `${api}/api/group-user/add`,
         {
           clave,
           usuarioId: user.value.id,

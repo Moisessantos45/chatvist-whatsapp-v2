@@ -26,7 +26,8 @@
 
     <!-- Menú de opciones -->
     <OptionsMenu v-if="showOptionsMenu" @close="showOptionsMenu = false" @new-group="handleNewGroup"
-      @join-group="handleJoinGroup" @new-contact="handleNewContact" @settings="handleSettings" @logout="handleLogout" />
+      @join-group="handleJoinGroup" @new-contact="handleNewContact" @settings="handleSettings" @logout="handleLogout"
+      @admin-panel="handleAdminPanel" />
 
     <!-- Modal para unirse a grupo -->
     <JoinGroupModal v-if="showJoinGroupModal" @close="showJoinGroupModal = false" />
@@ -78,6 +79,11 @@ const handleSettings = () => {
   showOptionsMenu.value = false
   // Aquí puedes emitir un evento o manejar los ajustes
   console.log('Ajustes')
+}
+
+const handleAdminPanel = () => {
+  showOptionsMenu.value = false
+  router.push({ name: 'AdminPanel' })
 }
 
 const handleLogout = async () => {

@@ -3,7 +3,7 @@
   <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" @click="$emit('close')">
     <!-- Contenido del menú -->
     <div
-      class="bg-white rounded-2xl shadow-2xl p-6 w-10/12 md:w-5/12 lg:w-3/12 transform transition-all duration-300 scale-100"
+      class="bg-white rounded-2xl shadow-2xl p-6 md:w-6/12 transform transition-all duration-300 scale-100"
       @click.stop>
       <!-- Header -->
       <div class="text-center mb-6">
@@ -12,7 +12,7 @@
       </div>
 
       <!-- Opciones del menú -->
-      <div class="space-y-3">
+      <div class="space-y-3 md:grid md:grid-cols-2 md:gap-2">
         <button @click="$emit('new-group')"
           class="w-full flex items-center p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all duration-200 group">
           <div
@@ -60,6 +60,19 @@
             <p class="text-sm text-gray-500">Configurar la aplicación</p>
           </div>
         </button>
+
+        <!-- Admin Panel (solo visible para admins) -->
+        <button v-if="userStore.user.isAdmin" @click="$emit('admin-panel')"
+          class="w-full flex items-center p-4 rounded-xl bg-orange-50 hover:bg-orange-100 transition-all duration-200 group">
+          <div
+            class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center mr-4">
+            <Shield class="w-6 h-6 text-white" />
+          </div>
+          <div class="text-left">
+            <h3 class="font-semibold text-gray-800 group-hover:text-orange-700">Panel de Admin</h3>
+            <p class="text-sm text-gray-500">Gestionar usuarios y grupos</p>
+          </div>
+        </button>
         <div class="border-t border-gray-200"></div>
         <button @click="$emit('logout')"
           class="w-full flex items-center p-4 rounded-xl bg-red-50 hover:bg-red-100 transition-all duration-200 group">
@@ -86,7 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import { Users, UserPlus, Settings } from 'lucide-vue-next'
+import { Users, UserPlus, Settings, Shield } from 'lucide-vue-next'
+import useUserStore from '@/stores/user'
+
+const userStore = useUserStore()
 
 // Emits
 defineEmits<{
@@ -94,6 +110,7 @@ defineEmits<{
   'new-group': []
   'join-group': []
   'new-contact': []
+  'admin-panel': []
   "logout": []
   settings: []
 }>()

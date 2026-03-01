@@ -24,6 +24,15 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/admin",
+    name: "AdminPanel",
+    component: () => import("../views/AdminPanel.vue"),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
+  },
 ];
 
 const router = createRouter({
@@ -31,14 +40,29 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem("bearerToken");
     if (!token) {
       next({ name: "Login" });
-    } else {
-      next();
+      return;
     }
+
+    // Admin guard
+    if (to.meta.requiresAdmin) {
+      const { default: useUserStore } = await import("../stores/user");
+      const userStore = useUserStore();
+      // If user data is not loaded yet, fetch it
+      if (!userStore.user.id) {
+        await userStore.getUser();
+      }
+      if (!userStore.user.isAdmin) {
+        next({ name: "Dashboard" });
+        return;
+      }
+    }
+
+    next();
   } else {
     next();
   }

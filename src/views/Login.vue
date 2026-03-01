@@ -63,8 +63,10 @@ const email = ref('')
 const password = ref('')
 
 const handleSubmit = async () => {
-  await userStore.login(email.value, password.value)
-  router.replace({ name: 'Dashboard' })
+  const success = await userStore.login(email.value, password.value)
+  if (success) {
+    router.replace({ name: 'Dashboard' })
+  }
 }
 
 </script>

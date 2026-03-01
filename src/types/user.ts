@@ -9,6 +9,9 @@ interface User {
   password: string;
   fecha: Date;
   token: string;
+  isAdmin: boolean;
+  isActive: boolean;
+  isLlm: boolean;
 
   grupos: Cluster[];
   mensajes: Message[];
@@ -22,6 +25,9 @@ const initializedUserState = {
   password: "",
   fecha: new Date(),
   token: "",
+  isAdmin: false,
+  isActive: true,
+  isLlm: false,
   grupos: [],
   mensajes: [],
 };

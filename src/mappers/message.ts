@@ -11,6 +11,7 @@ const mapToJsonEntityMessage = (data: { [key: string]: any }): Message => {
     contenido: data["contenido"]?.toString() ?? "",
     fecha: isNaN(parsedFecha.getTime()) ? new Date() : parsedFecha,
     grupoId: Number(data["grupoId"]) || 0,
+    groupIdStr: data["groupIdStr"]?.toString() ?? undefined,
     usuarioId: Number(data["usuarioId"]) || 0,
     respuestaId:
       data["respuestaId"] != null ? Number(data["respuestaId"]) : undefined,
@@ -31,6 +32,7 @@ const mapToStringEntityMessage = (data: { [key: string]: any }): Message => {
     contenido: String(data["Content"]) ?? "",
     fecha: new Date(String(data["Fecha"])) ?? new Date(),
     grupoId: parseInt(data["GroupID"]) ?? 0,
+    groupIdStr: data["GroupID"] ? String(data["GroupID"]) : undefined,
     usuarioId: parseInt(data["SenderID"]) ?? 0,
     respuestaId: parseInt(data["AnswerId"]) ?? -1,
     senderName: data["SenderName"] ? String(data["SenderName"]) : undefined,

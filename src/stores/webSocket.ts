@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from "pinia";
 import type { Message } from "@/types/message";
 import useClusterStore from "./cluster";
 import useMessageStore from "./message";
+import useUserStore from "./user";
 import { mapToStringEntityMessage } from "@/mappers/message";
 
 const useWebSocketStore = defineStore("webSocket", () => {
@@ -13,7 +14,9 @@ const useWebSocketStore = defineStore("webSocket", () => {
   const url = ref(import.meta.env.VITE_URL_WS);
   const clusterStore = useClusterStore();
   const messageStore = useMessageStore();
+  const userStore = useUserStore();
   const { cluster } = storeToRefs(clusterStore);
+  const { user } = storeToRefs(userStore);
 
   // Actions
   const connect = () => {
@@ -84,13 +87,14 @@ const useWebSocketStore = defineStore("webSocket", () => {
         answerId: messageText.respuestaId
           ? String(messageText.respuestaId)
           : String(-1),
-        // Agrega cualquier otro dato necesario como el ID del usuario o chat
+        senderName: user.value.nombre,
+        senderApodo: user.value.apodo,
       };
       console.log("WebSocket: Enviando mensaje:", message);
       ws.value.send(JSON.stringify(message));
     } else {
       console.error(
-        "No se puede enviar el mensaje: WebSocket no está conectado."
+        "No se puede enviar el mensaje: WebSocket no está conectado.",
       );
     }
   };

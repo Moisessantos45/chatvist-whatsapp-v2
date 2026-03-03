@@ -6,6 +6,7 @@ import { initializedMessageState } from "@/types/message";
 import { mapToJsonEntityMessage } from "../mappers/message";
 import useWebSocketStore from "./webSocket";
 import useUserStore from "./user";
+import useClusterStore from "./cluster";
 
 const useMessageStore = defineStore("message", () => {
   const api = import.meta.env.VITE_HOST_API;
@@ -13,6 +14,7 @@ const useMessageStore = defineStore("message", () => {
   const messages = ref<Message[]>([]);
   const webSocketStore = useWebSocketStore();
   const userStore = useUserStore();
+  const clusterStore = useClusterStore();
   const { user } = storeToRefs(userStore);
 
   // Variables para respuestas
@@ -57,11 +59,20 @@ const useMessageStore = defineStore("message", () => {
 
   const addAnswerToMessage = (message: Message) => {
     console.log("Adding answer to message:", message);
-    if (message.respuestaId !== user.value.id) {
-      messages.value = [
-        ...messages.value.filter((m) => m.id !== message.id),
-        message,
-      ];
+    if (
+      !message.groupIdStr ||
+      message.groupIdStr === clusterStore.cluster?.clave
+    ) {
+      if (!messages.value.some((m) => m.id === message.id)) {
+        messages.value.push(message);
+      }
+    } else {
+      // Here we could notify the ContactList that a new message arrived
+      // For now we just ignore it so it doesn't pollute the current chat.
+      console.log(
+        "Message for another chat ignored by active view:",
+        message.groupIdStr,
+      );
     }
   };
 

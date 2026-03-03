@@ -49,6 +49,7 @@ const useMessageStore = defineStore("message", () => {
       });
 
       const newMessage = mapToJsonEntityMessage(data.data);
+      newMessage.groupIdStr = clusterStore.cluster.clave;
       messages.value.push({ ...newMessage, usuario: user.value });
       webSocketStore.sendMessage(newMessage);
       message.value = { ...initializedMessageState };

@@ -5,6 +5,7 @@ interface Message {
   contenido: string;
   fecha: Date;
   grupoId: number;
+  groupIdStr?: string;
   usuarioId: number;
   respuestaId?: number;
   senderName?: string;
@@ -18,6 +19,7 @@ const initializedMessageState = {
   contenido: "",
   fecha: new Date(),
   grupoId: 0,
+  groupIdStr: undefined,
   usuarioId: 0,
   respuestaId: undefined,
   senderName: undefined,

@@ -1,69 +1,108 @@
 <template>
   <div :class="[
-    'bg-white border-r border-gray-200 flex flex-col transition-all duration-300',
-    cluster.clave && isMobile ? 'hidden' : 'w-full md:w-[350px] lg:w-[400px] shrink-0'
+    'flex flex-col h-full bg-[#13151a] w-full border-r border-gray-800 transition-all duration-300',
+    isMobile && (cluster?.id || cluster?.clave) ? 'hidden' : 'block md:w-[380px] lg:w-[420px] flex-shrink-0'
   ]">
-    <!-- Header del sidebar -->
-    <div class="bg-gray-50 border-b border-gray-200 px-5 pt-5 pb-4">
-      <div class="flex items-center justify-between mb-4">
-        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Chats</h1>
-        <button @click="showOptionsMenu = true"
-          class="p-2 -mr-2 rounded-md hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer">
+
+    <!-- Header Principal -->
+    <div class="px-5 text-white py-4 bg-[#1a1d24] border-b border-gray-800 flex  items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="relative group cursor-pointer" @click="openProfileModal">
+          <img src="https://i.pravatar.cc/150?img=11" alt="Perfil"
+            class="w-10 h-10 rounded-full object-cover ring-2 ring-white/10 group-hover:ring-white/30 transition-all">
+          <div class="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+             <Settings class="w-4 h-4 text-white" />
+          </div>
+        </div>
+        <div>
+          <h2 class="font-semibold text-gray-100 text-base leading-tight">{{ user.nombre }}</h2>
+          <p class="text-xs text-gray-400">@{{ user.apodo }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1">
+        <button
+          class="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white" title="Nueva conversación">
+          <MessageSquarePlus class="w-5 h-5" />
+        </button>
+        <button @click="openOptionsModal"
+          class="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white" title="Opciones">
           <MoreVertical class="w-5 h-5" />
         </button>
       </div>
+    </div>
 
-      <!-- Barra de búsqueda -->
-      <div class="relative">
-        <Search class="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" stroke-width="2.5" />
-        <input v-model="searchQuery" type="text" placeholder="Buscar o empezar un nuevo chat"
-          class="w-full pl-10 pr-4 py-2 bg-white rounded-lg border border-gray-200 placeholder-gray-400 text-sm text-gray-700 focus:border-gray-300 focus:ring-0 transition-colors" />
+    <!-- Buscador -->
+    <div class="p-3 bg-[#13151a] border-b border-gray-800 flex-shrink-0">
+      <div class="relative group">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <Search class="h-5 w-5 text-gray-400 group-focus-within:text-gray-200 transition-colors" />
+        </div>
+        <input v-model="searchQuery" type="text" placeholder="Buscar un chat o iniciar uno nuevo"
+          class="w-full bg-[#1e2128] text-gray-100 border border-gray-700/50 rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-whatsapp-dark-blue focus:border-whatsapp-dark-blue transition-all duration-300 placeholder-gray-500 text-[15px] shadow-sm">
       </div>
     </div>
 
-    <!-- Lista de contactos -->
     <ContactList :searchQuery="searchQuery" />
 
     <!-- Menú de opciones -->
     <OptionsMenu v-if="showOptionsMenu" @close="showOptionsMenu = false" @new-group="handleNewGroup"
-      @join-group="handleJoinGroup" @new-contact="handleNewContact" @settings="handleSettings" @logout="handleLogout"
-      @admin-panel="handleAdminPanel" />
+      @join-group="handleJoinGroup" @new-contact="() => { }" @settings="() => { }" @logout="handleLogout"
+      @admin-panel="goToAdmin" />
 
     <!-- Modal para unirse a grupo -->
-    <JoinGroupModal v-if="showJoinGroupModal" @close="showJoinGroupModal = false" />
+    <JoinGroupModal v-if="showJoinGroupModal" @close="showJoinGroupModal = false" @join="joinGroup" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { Search, MoreVertical } from 'lucide-vue-next'
-import OptionsMenu from '@/components/OptionsMenu.vue'
-import JoinGroupModal from '@/components/JoinGroupModal.vue'
-import ContactList from './list/ContactList.vue'
-import useClusterStore from '@/stores/cluster'
+import {
+  MoreVertical,
+  MessageSquarePlus,
+  Settings,
+  Search
+} from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
 import useUserStore from '@/stores/user'
+import useUserGroupStore from '@/stores/userGroup'
+import useClusterStore from '@/stores/cluster'
 
-
-defineProps<{
-  isMobile: boolean
-}>()
-
-const router = useRouter()
+import ContactList from './list/ContactList.vue'
+import OptionsMenu from './OptionsMenu.vue'
+import JoinGroupModal from './JoinGroupModal.vue'
 
 const userStore = useUserStore()
-const clusterStore = useClusterStore()
-const { cluster } = storeToRefs(clusterStore)
+const { user } = storeToRefs(userStore)
+const router = useRouter()
+const { cluster } = storeToRefs(useClusterStore())
+const userGroupStore = useUserGroupStore()
+
+// Props
+interface Props {
+  isMobile: boolean
+}
+
+defineProps<Props>()
 
 // Reactive data
-const searchQuery = ref('')
 const showOptionsMenu = ref(false)
 const showJoinGroupModal = ref(false)
+const searchQuery = ref('')
 
+const openOptionsModal = () => {
+  showOptionsMenu.value = true
+}
 
+const openProfileModal = () => {
+  console.log('Open profile modal')
+}
+
+// Handlers for OptionsMenu
 const handleNewGroup = () => {
   showOptionsMenu.value = false
+  // showCreateGroupModal.value = true
 }
 
 const handleJoinGroup = () => {
@@ -71,28 +110,25 @@ const handleJoinGroup = () => {
   showJoinGroupModal.value = true
 }
 
-const handleNewContact = () => {
+const goToAdmin = () => {
   showOptionsMenu.value = false
+  router.push('/admin')
 }
 
-const handleSettings = () => {
+const handleLogout = () => {
   showOptionsMenu.value = false
-  // Aquí puedes emitir un evento o manejar los ajustes
-  console.log('Ajustes')
+  userStore.logout()
 }
 
-const handleAdminPanel = () => {
-  showOptionsMenu.value = false
-  router.push({ name: 'AdminPanel' })
+const joinGroup = async (groupCode: string) => {
+  try {
+    await userGroupStore.addUserToGroup(groupCode)
+    showJoinGroupModal.value = false
+    console.log('Te has unido al grupo exitosamente')
+  } catch (error) {
+    console.error('Error al unirse al grupo', error)
+  }
 }
-
-const handleLogout = async () => {
-  showOptionsMenu.value = false
-  await userStore.logout().then(() => {
-    router.replace({ name: 'Login' })
-  });
-}
-
 
 </script>
 

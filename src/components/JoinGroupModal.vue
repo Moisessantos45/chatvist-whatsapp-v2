@@ -2,28 +2,28 @@
   <!-- Overlay del modal -->
   <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 transition-opacity" @click="$emit('close')">
     <!-- Contenido del modal -->
-    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 w-full max-w-[400px] transform transition-all"
+    <div class="bg-[#1a1d24] border border-gray-800 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-8 w-full max-w-[400px] transform transition-all"
       @click.stop>
       <!-- Header -->
       <div class="text-center mb-8">
         <div
-          class="w-14 h-14 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
+          class="w-14 h-14 bg-white/5 border border-transparent rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
           <Users class="w-7 h-7 text-whatsapp-dark-blue" stroke-width="1.5" />
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Unirse a Grupo</h2>
-        <p class="text-sm text-gray-500 mt-2">Ingresa la clave para acceder al chat</p>
+        <h2 class="text-2xl font-bold text-gray-100 tracking-tight">Unirse a Grupo</h2>
+        <p class="text-sm text-gray-400 mt-2">Ingresa la clave para acceder al chat</p>
       </div>
 
       <!-- Formulario -->
       <form @submit.prevent="handleSubmit">
         <div class="mb-8">
-          <label for="groupCode" class="block text-[13px] font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+          <label for="groupCode" class="block text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">
             Clave del Grupo
           </label>
           <div class="relative">
             <input id="groupCode" v-model="groupCode" type="text" placeholder="Ej: ABC123XYZ"
-              class="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200 rounded-xl focus:bg-white focus:border-whatsapp-dark-blue focus:ring-1 focus:ring-whatsapp-dark-blue transition-all duration-200 text-center text-lg font-mono tracking-wider placeholder-gray-400 text-gray-900"
-              :class="{ 'border-red-300 bg-red-50/50 focus:border-red-500 focus:ring-red-500 focus:bg-white': hasError }" required />
+              class="w-full px-4 py-3.5 bg-[#13151a] border border-gray-700/50 rounded-xl focus:bg-[#1e2128] focus:border-whatsapp-dark-blue focus:ring-1 focus:ring-whatsapp-dark-blue transition-all duration-200 text-center text-lg font-mono tracking-wider placeholder-gray-500 text-gray-100"
+              :class="{ 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500 focus:bg-[#1e2128]': hasError }" required />
             <div v-if="hasError" class="absolute right-3 top-1/2 transform -translate-y-1/2">
               <AlertCircle class="w-5 h-5 text-red-500" />
             </div>
@@ -37,7 +37,7 @@
         <!-- Botones -->
         <div class="flex space-x-3">
           <button type="button" @click="$emit('close')"
-            class="flex-1 px-4 py-3.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl text-gray-700 font-semibold transition-all duration-200 shadow-sm active:scale-[0.98]">
+            class="flex-1 px-4 py-3.5 bg-[#242830] border border-gray-700 hover:bg-[#2a2f38] rounded-xl text-gray-200 font-semibold transition-all duration-200 shadow-sm active:scale-[0.98]">
             Cancelar
           </button>
           <button type="submit" :disabled="!groupCode.trim() || isLoading"

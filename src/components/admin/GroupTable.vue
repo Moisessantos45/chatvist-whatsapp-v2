@@ -3,10 +3,21 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="border-b border-gray-200">
-                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nombre</th>
-                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Clave</th>
-                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Creado</th>
+                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        ID
+                    </th>
+                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Nombre
+                    </th>
+                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Clave
+                    </th>
+                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Creado
+                    </th>
+                    <th class="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Acciones
+                    </th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -25,7 +36,15 @@
                         <code
                             class="px-2 py-1 rounded-md bg-gray-100 text-xs font-mono text-gray-600 select-all">{{ g.clave }}</code>
                     </td>
-                    <td class="py-4 px-4 text-sm text-gray-500">{{ formatDate(g.fecha) }}</td>
+                    <td class="py-4 px-4 text-sm text-gray-500">
+                        {{ formatDate(g.fecha) }}
+                    </td>
+                    <td class="py-4 px-4">
+                        <button
+                            class="px-2 py-1 rounded-md bg-blue-500 text-white text-xs font-mono text-gray-600 select-all">
+                            ver grupo
+                        </button>
+                    </td>
                 </tr>
                 <tr v-if="groups.length === 0">
                     <td colspan="4" class="py-12 text-center text-gray-400">
@@ -39,18 +58,18 @@
 </template>
 
 <script setup lang="ts">
-import type { Cluster } from '@/types/cluster'
-import { FolderClosed } from 'lucide-vue-next'
+import type { Cluster } from "@/types/cluster";
+import { FolderClosed } from "lucide-vue-next";
 
 defineProps<{
-    groups: Cluster[]
-}>()
+    groups: Cluster[];
+}>();
 
 const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('es-MX', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    })
-}
+    return new Date(date).toLocaleDateString("es-MX", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
 </script>

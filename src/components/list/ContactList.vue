@@ -2,8 +2,8 @@
     <!-- Lista de contactos -->
     <div class="flex-1 overflow-y-auto w-full">
         <div v-for="contact in filteredContacts" :key="contact.id" @click="selectContact(contact)" :class="[
-            'flex items-center px-5 py-3.5 cursor-pointer transition-colors w-full border-b border-gray-100 last:border-b-0',
-            cluster?.id === contact.id ? 'bg-[#F0F2F5]' : 'bg-white hover:bg-gray-50'
+            'flex items-center px-5 py-3.5 cursor-pointer transition-colors w-full border-b border-gray-800/60 last:border-b-0',
+            cluster?.id === contact.id ? 'bg-[#20232b]' : 'bg-transparent hover:bg-white/5'
         ]">
             <!-- Avatar -->
             <div class="relative mr-4 shrink-0">
@@ -16,13 +16,13 @@
             <!-- Información del contacto -->
             <div class="flex-1 min-w-0 border-b border-transparent">
                 <div class="flex items-center justify-between mb-0.5">
-                    <h3 class="font-medium text-gray-900 truncate text-base leading-tight">
+                    <h3 class="font-medium text-gray-100 truncate text-base leading-tight">
                         {{ contact.nombre }}
                     </h3>
                     <span class="text-xs text-gray-500 font-medium shrink-0 ml-2">12:34</span>
                 </div>
                 <div class="flex items-center justify-between text-sm" v-if="contact.messages.length > 0">
-                    <p class="text-gray-500 truncate leading-snug">{{ contact.messages[0].contenido }}</p>
+                    <p class="text-gray-400 truncate leading-snug">{{ contact.messages[0].contenido }}</p>
                     <!-- <div v-if="contact.unreadCount > 0"
                         class="bg-whatsapp-light text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 shrink-0 ml-2">
                         {{ contact.unreadCount }}

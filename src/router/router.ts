@@ -25,6 +25,14 @@ const routes = [
     },
   },
   {
+    path: "/join-group/:clave",
+    name: "JoinGroup",
+    component: () => import("../views/JoinGroup.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/admin",
     name: "AdminPanel",
     component: () => import("../views/AdminPanel.vue"),
@@ -38,6 +46,13 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior(_, __, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0, behavior: "smooth" };
+    }
+  },
 });
 
 router.beforeEach(async (to, _, next) => {

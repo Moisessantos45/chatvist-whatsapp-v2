@@ -45,6 +45,11 @@
 
       <!-- Área de mensajes -->
       <div class="flex-1 relative flex flex-col overflow-hidden bg-[#EFEAE2] chat-background">
+
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-whatsapp-dark-blue"></div>
+        </div>
+
         <div ref="messagesContainer" @scroll="handleScroll" class="flex-1 overflow-y-auto px-5 py-6">
           <div class="space-y-3">
             <div v-for="message in messages" :key="message.id" :class="[
@@ -63,7 +68,8 @@
                   class="mb-2 p-2 rounded-md bg-black/5 border-l-4 border-whatsapp-medium-blue cursor-pointer transition-colors hover:bg-black/10">
                   <div v-if="getRepliedMessage(message.respuestaId)" class="text-xs">
                     <p class="text-gray-800 font-medium mb-1 truncate">
-                        {{ getRepliedMessage(message.respuestaId)?.senderApodo || getRepliedMessage(message.respuestaId)?.usuario?.apodo || 'Usuario' }}
+                      {{ getRepliedMessage(message.respuestaId)?.senderApodo ||
+                        getRepliedMessage(message.respuestaId)?.usuario?.apodo || 'Usuario' }}
                     </p>
                     <p class="text-gray-600 truncate">
                       {{ getRepliedMessage(message.respuestaId)?.contenido }}
@@ -75,7 +81,8 @@
                 </div>
 
                 <!-- Nombre del usuario (solo para mensajes de otros) -->
-                <div v-if="message.usuarioId !== user.id" class="text-[13px] font-semibold text-whatsapp-medium-blue mb-1">
+                <div v-if="message.usuarioId !== user.id"
+                  class="text-[13px] font-semibold text-whatsapp-medium-blue mb-1">
                   {{ message.senderApodo || message.usuario?.apodo || 'Desconocido' }}
                 </div>
 
@@ -116,17 +123,19 @@
         <!-- Input area -->
         <div class="bg-[#F0F2F5] px-4 py-3 border-t border-gray-200">
           <!-- Indicador de respuesta -->
-          <div v-if="replyingToMessage" class="mb-3 mx-2 relative overflow-hidden bg-white rounded-lg border-l-4 border-whatsapp-medium-blue shadow-sm">
+          <div v-if="replyingToMessage"
+            class="mb-3 mx-2 relative overflow-hidden bg-white rounded-lg border-l-4 border-whatsapp-medium-blue shadow-sm">
             <div class="p-3 pr-10">
-                <p class="text-[13px] font-semibold text-whatsapp-medium-blue mb-1">
-                  {{ getRepliedMessage(replyingToMessage)?.senderApodo ||
-                    getRepliedMessage(replyingToMessage)?.usuario?.apodo || 'Usuario desconocido' }}
-                </p>
-                <p class="text-sm text-gray-600 truncate">
-                  {{ getRepliedMessage(replyingToMessage)?.contenido }}
-                </p>
+              <p class="text-[13px] font-semibold text-whatsapp-medium-blue mb-1">
+                {{ getRepliedMessage(replyingToMessage)?.senderApodo ||
+                  getRepliedMessage(replyingToMessage)?.usuario?.apodo || 'Usuario desconocido' }}
+              </p>
+              <p class="text-sm text-gray-600 truncate">
+                {{ getRepliedMessage(replyingToMessage)?.contenido }}
+              </p>
             </div>
-            <button @click="cancelReply" class="absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100 transition-colors">
+            <button @click="cancelReply"
+              class="absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100 transition-colors">
               <X class="w-4 h-4 text-gray-400" />
             </button>
           </div>
@@ -135,7 +144,8 @@
             <button class="p-2 sm:p-3 rounded-full hover:bg-black/5 transition-colors mb-0.5 text-gray-500">
               <Smile class="w-6 h-6 sm:w-7 sm:h-7" stroke-width="1.5" />
             </button>
-            <button class="p-2 sm:p-3 rounded-full hover:bg-black/5 transition-colors mb-0.5 text-gray-500 hidden sm:block">
+            <button
+              class="p-2 sm:p-3 rounded-full hover:bg-black/5 transition-colors mb-0.5 text-gray-500 hidden sm:block">
               <Paperclip class="w-6 h-6 sm:w-7 sm:h-7" stroke-width="1.5" />
             </button>
 
@@ -204,7 +214,6 @@ import useUserStore from '@/stores/user'
 import useMessageStore from '@/stores/message'
 import ChatOptionsModal from '@/components/ChatOptionsModal.vue'
 
-// Props
 interface Props {
   isMobile: boolean
 }
@@ -214,7 +223,7 @@ const userStore = useUserStore()
 const messageStore = useMessageStore()
 const { cluster } = storeToRefs(clusterStore)
 const { user, filteredUsers, selectedMentionIndex } = storeToRefs(userStore)
-const { messages, message, replyingToMessage } = storeToRefs(messageStore)
+const { messages, message, replyingToMessage, isLoading } = storeToRefs(messageStore)
 
 defineProps<Props>()
 

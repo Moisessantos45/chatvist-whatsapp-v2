@@ -1,12 +1,14 @@
 <template>
-    <div v-if="show" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 p-4 transition-opacity"
+    <div v-if="show"
+        class="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 p-4 transition-opacity"
         @click.self="$emit('close')">
         <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-md transform transition-all">
             <!-- Header del modal -->
             <div class="px-6 py-5 border-b border-gray-100">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Opciones del Chat</h3>
-                    <button @click="$emit('close')" class="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600">
+                    <button @click="$emit('close')"
+                        class="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600">
                         <X class="w-5 h-5" />
                     </button>
                 </div>
@@ -17,7 +19,8 @@
                 <!-- Compartir clave de grupo -->
                 <button @click="handleShareGroupCode"
                     class="w-full px-6 py-3.5 flex items-center hover:bg-gray-50 transition-colors text-left group">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
                         <Share2 class="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
@@ -29,7 +32,8 @@
                 <!-- Agregar nuevo integrante -->
                 <button @click="handleAddMember"
                     class="w-full px-6 py-3.5 flex items-center hover:bg-gray-50 transition-colors text-left group">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
                         <UserPlus class="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
@@ -38,10 +42,25 @@
                     </div>
                 </button>
 
+                <!-- Si el usuario es admin permitir descargar los mensajes del grupo -->
+                <button v-if="user.isAdmin" @click="openDownloadModal"
+                    class="w-full px-6 py-3.5 flex items-center hover:bg-gray-50 transition-colors text-left group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+                        <Download class="w-5 h-5 text-gray-600" />
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Descargar mensajes</h4>
+                        <p class="text-[13px] text-gray-500">Descargar los mensajes del grupo</p>
+                    </div>
+                </button>
+
+
                 <!-- Ver información -->
                 <button @click="handleViewInfo"
                     class="w-full px-6 py-3.5 flex items-center hover:bg-gray-50 transition-colors text-left group">
-                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
                         <Info class="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
@@ -56,56 +75,60 @@
         <div v-if="showShareModal"
             class="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-[60] p-4 transition-opacity"
             @click.self="showShareModal = false">
+            <SharedKeyModal />
+        </div>
+
+        <!-- Modal para descargar los mensajes con filtro de fechas -->
+        <div v-if="showDownloadModal"
+            class="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-[60] p-4 transition-opacity"
+            @click.self="showDownloadModal = false">
             <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-sm p-8 transform transition-all">
-                <div v-if="!isLoading && codeCluster" class="text-center">
+                <div class="text-center mb-6">
                     <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-5 border border-gray-200">
-                        <Share2 class="w-6 h-6 text-gray-700" />
+                        <Download class="w-6 h-6 text-gray-700" />
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Clave del Grupo</h3>
-                    <p class="text-sm text-gray-500 mb-6">Comparte esta clave para que otros se unan al grupo</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Descargar Mensajes</h3>
+                    <p class="text-sm text-gray-500">Filtra los mensajes por fecha (Opcional)</p>
+                </div>
 
-                    <!-- Clave del grupo -->
-                    <div class="bg-gray-50 rounded-xl p-5 mb-8 flex flex-col items-center gap-4 border border-gray-200/60 shadow-inner">
-                        <div class="p-2 bg-white rounded-lg shadow-sm border border-gray-100">
-                            <QrcodeVue :value="urlInvite" :size="140" />
-                        </div>
-                        <RouterLink :to="{ name: 'JoinGroup', params: { clave: codeCluster } }" target="_blank"
-                            class="text-whatsapp-medium-blue hover:text-whatsapp-dark-blue font-medium text-sm transition-colors"> Unirse a través de enlace
-                        </RouterLink>
-                        
-                        <div class="w-full h-px bg-gray-200/60 my-1"></div>
-
-                        <div class="flex items-center justify-between w-full bg-white px-3 py-2.5 rounded-lg border border-gray-200 shadow-sm">
-                            <span class="font-mono text-[15px] font-semibold text-gray-800 tracking-wider">{{ codeCluster }}</span>
-                            <button @click="copyToClipboard"
-                                class="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 hover:text-whatsapp-dark-blue transition-colors group" title="Copiar clave">
-                                <Copy class="w-4 h-4 group-active:scale-90 transition-transform" />
-                            </button>
-                        </div>
+                <div class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-[13px] font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Fecha Inicio</label>
+                        <input type="date" v-model="startDate" 
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:bg-white focus:border-whatsapp-dark-blue focus:ring-1 focus:ring-whatsapp-dark-blue transition-all duration-200 text-gray-700" />
                     </div>
-
-                    <!-- Botones -->
-                    <div class="flex space-x-3">
-                        <button @click="showShareModal = false"
-                            class="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors shadow-sm active:scale-[0.98]">
-                            Cerrar
-                        </button>
+                    <div>
+                        <label class="block text-[13px] font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Fecha Fin</label>
+                        <input type="date" v-model="endDate" 
+                            class="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl focus:bg-white focus:border-whatsapp-dark-blue focus:ring-1 focus:ring-whatsapp-dark-blue transition-all duration-200 text-gray-700" />
                     </div>
                 </div>
-                <div v-else class="flex flex-col items-center justify-center py-10">
-                    <div class="w-12 h-12 rounded-full border-2 border-gray-200 border-t-whatsapp-medium-blue animate-spin mb-4"></div>
-                    <p class="text-sm text-gray-500 font-medium">Generando...</p>
+
+                <div class="flex space-x-3">
+                    <button @click="showDownloadModal = false"
+                        class="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors shadow-sm active:scale-[0.98]">
+                        Cancelar
+                    </button>
+                    <button @click="downloadDataGroup" :disabled="isDownloading"
+                        class="flex-1 px-4 py-2.5 bg-whatsapp-dark-blue hover:bg-whatsapp-dark-blue/90 text-white font-medium rounded-xl transition-colors shadow-[0_4px_14px_0_rgb(0,0,0,0.2)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
+                        <div v-if="isDownloading" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                        Descargar
+                    </button>
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { X, Share2, UserPlus, Info, Copy } from 'lucide-vue-next'
-import QrcodeVue from 'qrcode.vue'
+import { ref } from 'vue'
+import { X, Share2, UserPlus, Info, Download } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
+import SharedKeyModal from './SharedKeyModal.vue'
+import useUserStore from '@/stores/user'
 import useClusterStore from '@/stores/cluster'
+import useMessageStore from '@/stores/message'
 import notification from '@/service/notification'
 
 interface Props {
@@ -115,8 +138,15 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
+
 const clusterStore = useClusterStore()
-const { codeCluster, urlInvite, isLoading, showShareModal } = storeToRefs(clusterStore);
+const { showShareModal } = storeToRefs(clusterStore);
+
+const messageStore = useMessageStore()
+
 
 defineEmits<{
     close: []
@@ -124,6 +154,11 @@ defineEmits<{
     addMember: []
     viewInfo: []
 }>()
+
+const showDownloadModal = ref(false)
+const startDate = ref('')
+const endDate = ref('')
+const isDownloading = ref(false)
 
 // Métodos
 const handleShareGroupCode = () => {
@@ -142,14 +177,26 @@ const handleViewInfo = () => {
     // Aquí puedes emitir un evento o abrir otro modal
 }
 
-const copyToClipboard = async () => {
+const openDownloadModal = () => {
+    startDate.value = ''
+    endDate.value = ''
+    showDownloadModal.value = true
+}
+
+const downloadDataGroup = async () => {
     try {
-        await navigator.clipboard.writeText(codeCluster.value)
-        notification('Clave copiada al portapapeles', 'success')
-    } catch (err) {
-        console.error('Error al copiar:', err)
+        isDownloading.value = true
+        await messageStore.exportarJSON(startDate.value, endDate.value);
+        notification('Datos descargados correctamente', 'success')
+        showDownloadModal.value = false
+    } catch (e) {
+        notification('Error al descargar los datos', 'error')
+    } finally {
+        isDownloading.value = false
     }
 }
+
+
 </script>
 
 <style scoped>

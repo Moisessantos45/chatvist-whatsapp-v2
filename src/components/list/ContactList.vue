@@ -42,6 +42,7 @@ import type { Cluster } from '@/types/cluster';
 
 const clusterStore = useClusterStore();
 const messageStore = useMessageStore();
+const {currentCluster}=storeToRefs(messageStore);
 const { clusters, cluster } = storeToRefs(clusterStore);
 
 const props = defineProps<{
@@ -59,6 +60,7 @@ const filteredContacts = computed(() => {
 
 const selectContact = async (contact: Cluster) => {
     cluster.value = { ...contact };
+    currentCluster.value = contact.id;
     await messageStore.getAllMessagesCluster(contact.id);
 }
 

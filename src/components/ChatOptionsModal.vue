@@ -57,7 +57,7 @@
             class="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-60 p-4"
             @click.self="showShareModal = false">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-                <div class="text-center">
+                <div v-if="!isLoading && codeCluster" class="text-center">
                     <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
                         <Share2 class="w-8 h-8 text-blue-600" />
                     </div>
@@ -65,9 +65,14 @@
                     <p class="text-sm text-gray-500 mb-6">Comparte esta clave para que otros se unan al grupo</p>
 
                     <!-- Clave del grupo -->
-                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                        <div class="flex items-center justify-between">
-                            <span class="font-mono text-lg font-semibold text-gray-900">{{ groupCode }}</span>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6 flex flex-col items-center gap-3">
+                        <QrcodeVue :value="urlInvite" :size="128" />
+                        <RouterLink :to="{ name: 'JoinGroup', params: { clave: codeCluster } }" target="_blank"
+                            class="text-blue-600 hover:underline"> Unirse al grupo
+                        </RouterLink>
+                        <div class="flex items-center justify-between w-full">
+                            <span class="font-mono text-lg font-semibold text-gray-900 text-center">{{
+                                codeCluster }}</span>
                             <button @click="copyToClipboard"
                                 class="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition-colors">
                                 <Copy class="w-4 h-4 text-blue-600" />
@@ -87,14 +92,21 @@
                         </button>
                     </div>
                 </div>
+                <div v-else class="flex items-center justify-center">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { X, Share2, UserPlus, Info, Copy } from 'lucide-vue-next'
+import QrcodeVue from 'qrcode.vue'
+import { storeToRefs } from 'pinia'
+import useClusterStore from '@/stores/cluster'
 import notification from '@/service/notification'
 
 interface Props {
@@ -103,7 +115,9 @@ interface Props {
     groupName: string
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
+const clusterStore = useClusterStore()
+const { codeCluster, urlInvite, isLoading, showShareModal } = storeToRefs(clusterStore);
 
 defineEmits<{
     close: []
@@ -112,12 +126,9 @@ defineEmits<{
     viewInfo: []
 }>()
 
-// Estado reactivo
-const showShareModal = ref(false)
-
 // Métodos
 const handleShareGroupCode = () => {
-    showShareModal.value = true
+    clusterStore.generateClusterCode()
 }
 
 const handleAddMember = () => {
@@ -134,7 +145,7 @@ const handleViewInfo = () => {
 
 const copyToClipboard = async () => {
     try {
-        await navigator.clipboard.writeText(props.groupCode)
+        await navigator.clipboard.writeText(codeCluster.value)
         notification('Clave copiada al portapapeles', 'success')
     } catch (err) {
         console.error('Error al copiar:', err)
@@ -142,16 +153,6 @@ const copyToClipboard = async () => {
 }
 
 const shareGroupCode = () => {
-    if (navigator.share) {
-        navigator.share({
-            title: `Únete al grupo ${props.groupName}`,
-            text: `Clave del grupo: ${props.groupCode}`,
-            url: window.location.href
-        })
-    } else {
-        // Fallback: copiar al portapapeles
-        copyToClipboard()
-    }
     showShareModal.value = false
 }
 </script>

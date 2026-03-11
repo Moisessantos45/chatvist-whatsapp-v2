@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-white flex overflow-hidden">
+    <div class="h-screen bg-gray-50 flex overflow-hidden">
         <!-- Sidebar - Lista de contactos (30%) -->
         <ContactList :isMobile="isMobile" />
 

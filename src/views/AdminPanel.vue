@@ -1,34 +1,34 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
+    <div class="min-h-screen bg-gray-50">
         <!-- Top Navigation -->
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-4">
                         <button @click="goBack"
-                            class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer">
-                            <ArrowLeft class="w-5 h-5 text-gray-600" />
+                            class="p-2 -ml-2 rounded-md text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+                            <ArrowLeft class="w-5 h-5" />
                         </button>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3">
                             <div
-                                class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-                                <Shield class="w-5 h-5 text-white" />
+                                class="w-8 h-8 rounded bg-gray-900 flex items-center justify-center shadow-sm">
+                                <Shield class="w-4 h-4 text-white" />
                             </div>
                             <div>
-                                <h1 class="text-lg font-bold text-gray-800 leading-tight">Panel de Administración</h1>
-                                <p class="text-xs text-gray-400">Gestión de usuarios y grupos</p>
+                                <h1 class="text-base font-semibold text-gray-900 leading-tight">Panel de Administración</h1>
+                                <p class="text-[13px] text-gray-500 font-medium">Gestión de usuarios y grupos</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-3">
                         <button @click="showCreateGroup = true"
-                            class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium text-sm transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md">
+                            class="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg font-medium text-sm transition-colors duration-200 cursor-pointer shadow-sm">
                             <FolderPlus class="w-4 h-4" />
                             <span class="hidden sm:inline">Crear Grupo</span>
                         </button>
                         <button @click="showRegisterAI = true"
-                            class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white rounded-xl font-medium text-sm transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md">
+                            class="flex items-center gap-2 px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium text-sm transition-colors duration-200 cursor-pointer shadow-sm">
                             <Bot class="w-4 h-4" />
                             <span class="hidden sm:inline">Registrar IA</span>
                         </button>
@@ -38,84 +38,70 @@
         </header>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                            <Users class="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">{{ adminStore.users.length }}</p>
-                            <p class="text-xs text-gray-400">Usuarios</p>
-                        </div>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-medium text-gray-500">Usuarios</p>
+                        <Users class="w-4 h-4 text-gray-400" />
                     </div>
+                    <p class="text-3xl font-semibold text-gray-900">{{ adminStore.users.length }}</p>
                 </div>
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                            <UserCheck class="w-5 h-5 text-emerald-600" />
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">{{ activeUsersCount }}</p>
-                            <p class="text-xs text-gray-400">Activos</p>
+                
+                <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-medium text-gray-500">Activos</p>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            <UserCheck class="w-4 h-4 text-gray-400" />
                         </div>
                     </div>
+                    <p class="text-3xl font-semibold text-gray-900">{{ activeUsersCount }}</p>
                 </div>
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
-                            <Bot class="w-5 h-5 text-violet-600" />
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">{{ aiUsersCount }}</p>
-                            <p class="text-xs text-gray-400">IAs</p>
-                        </div>
+
+                <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-medium text-gray-500">IAs</p>
+                        <Bot class="w-4 h-4 text-gray-400" />
                     </div>
+                    <p class="text-3xl font-semibold text-gray-900">{{ aiUsersCount }}</p>
                 </div>
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                            <FolderClosed class="w-5 h-5 text-amber-600" />
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">{{ adminStore.groups.length }}</p>
-                            <p class="text-xs text-gray-400">Grupos</p>
-                        </div>
+
+                <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-medium text-gray-500">Grupos</p>
+                        <FolderClosed class="w-4 h-4 text-gray-400" />
                     </div>
+                    <p class="text-3xl font-semibold text-gray-900">{{ adminStore.groups.length }}</p>
                 </div>
             </div>
 
             <!-- Tabs -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="flex border-b border-gray-100">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden min-h-[400px]">
+                <div class="flex border-b border-gray-200 bg-gray-50/50 px-4">
                     <button @click="activeTab = 'users'"
-                        class="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-medium transition-colors duration-150 cursor-pointer"
-                        :class="activeTab === 'users'
-                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
-                        <Users class="w-4 h-4" />
+                        class="px-4 py-3 text-sm font-medium transition-colors duration-200 relative"
+                        :class="activeTab === 'users' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
                         Usuarios
+                        <div v-if="activeTab === 'users'" class="absolute bottom-[-1px] left-0 w-full h-0.5 bg-gray-900"></div>
                     </button>
                     <button @click="activeTab = 'groups'"
-                        class="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-medium transition-colors duration-150 cursor-pointer"
-                        :class="activeTab === 'groups'
-                            ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
-                        <FolderClosed class="w-4 h-4" />
+                        class="px-4 py-3 text-sm font-medium transition-colors duration-200 relative"
+                        :class="activeTab === 'groups' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'">
                         Grupos
+                        <div v-if="activeTab === 'groups'" class="absolute bottom-[-1px] left-0 w-full h-0.5 bg-gray-900"></div>
                     </button>
                 </div>
 
                 <!-- Loading State -->
-                <div v-if="adminStore.loading" class="py-16 text-center">
-                    <Loader2 class="w-8 h-8 mx-auto mb-3 text-blue-500 animate-spin" />
-                    <p class="text-sm text-gray-400">Cargando datos...</p>
+                <div v-if="adminStore.loading" class="flex flex-col items-center justify-center p-20 text-center">
+                    <Loader2 class="w-6 h-6 text-gray-400 animate-spin mb-3" />
+                    <p class="text-sm font-medium text-gray-500">Cargando datos...</p>
                 </div>
 
                 <!-- Tab Content -->
-                <div v-else>
+                <div v-else class="p-0">
                     <UserTable v-if="activeTab === 'users'" :users="adminStore.users" @deactivate="handleDeactivate"
                         @remove-sessions="handleRemoveSessions" @assign-group="openAssignGroupModal" />
                     <GroupTable v-if="activeTab === 'groups'" :groups="adminStore.groups" />

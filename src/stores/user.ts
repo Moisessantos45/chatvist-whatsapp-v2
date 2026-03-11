@@ -29,7 +29,6 @@ const useUserStore = defineStore("user", () => {
       localStorage.setItem("bearerToken", token);
       return true;
     } catch (error) {
-      console.log("Login error:", error);
       notification(
         "Error al iniciar sesión. Verifica tus credenciales.",
         "error",
@@ -74,10 +73,8 @@ const useUserStore = defineStore("user", () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Get user successful:", data.data);
       user.value = mapToJsonEntityUser(data.data);
     } catch (error) {
-      console.log("Get user error:", error);
       resetUser();
       localStorage.removeItem("bearerToken");
       router.push({ name: "Login" });

@@ -7,11 +7,13 @@ import { mapToJsonEntityMessage } from "../mappers/message";
 import useWebSocketStore from "./webSocket";
 import useUserStore from "./user";
 import useClusterStore from "./cluster";
+import notification from "@/service/notification";
 
 const useMessageStore = defineStore("message", () => {
   const api = import.meta.env.VITE_HOST_API;
   const message = ref<Message>({ ...initializedMessageState });
   const messages = ref<Message[]>([]);
+  const currentCluster = ref<number>(-1);
   const webSocketStore = useWebSocketStore();
   const userStore = useUserStore();
   const clusterStore = useClusterStore();
@@ -28,19 +30,17 @@ const useMessageStore = defineStore("message", () => {
         },
       });
 
-      console.log("Get all messages success:", data);
       if (!data?.data) return;
+      currentCluster.value = id;
 
       messages.value = data.data.map(mapToJsonEntityMessage);
-      console.log("Messages:", messages.value);
     } catch (error) {
-      console.log("Get all messages error:", error);
+      notification("Error al obtener mensajes", "error");
     }
   };
 
   const registerMessage = async () => {
     try {
-      console.log("Registering message:", message.value);
       const { usuario, ...dataMessage } = message.value;
       const { data } = await axios.post(`${api}/api/mensaje`, dataMessage, {
         headers: {
@@ -54,12 +54,11 @@ const useMessageStore = defineStore("message", () => {
       webSocketStore.sendMessage(newMessage);
       message.value = { ...initializedMessageState };
     } catch (error) {
-      console.log("Register message error:", error);
+      notification("Error al enviar mensaje", "error");
     }
   };
 
   const addAnswerToMessage = (message: Message) => {
-    console.log("Adding answer to message:", message);
     if (
       !message.groupIdStr ||
       message.groupIdStr === clusterStore.cluster?.clave
@@ -117,6 +116,7 @@ const useMessageStore = defineStore("message", () => {
   return {
     message,
     messages,
+    currentCluster,
     replyingToMessage,
     getAllMessagesCluster,
     registerMessage,

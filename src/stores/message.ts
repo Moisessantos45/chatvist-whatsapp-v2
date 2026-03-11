@@ -11,29 +11,59 @@ import notification from "@/service/notification";
 
 const useMessageStore = defineStore("message", () => {
   const api = import.meta.env.VITE_HOST_API;
+  const userStore = useUserStore();
+  const clusterStore = useClusterStore();
+  const webSocketStore = useWebSocketStore();
+  const { user } = storeToRefs(userStore);
+
   const message = ref<Message>({ ...initializedMessageState });
   const messages = ref<Message[]>([]);
   const currentCluster = ref<number>(-1);
-  const webSocketStore = useWebSocketStore();
-  const userStore = useUserStore();
-  const clusterStore = useClusterStore();
-  const { user } = storeToRefs(userStore);
+  const isLoading = ref<boolean>(false);
 
   // Variables para respuestas
   const replyingToMessage = ref<number | null>(null);
 
-  const getAllMessagesCluster = async (id: number) => {
+  const getAllMessagesCluster = async (
+    id: number = -1,
+    startDate: string = "",
+    endDate: string = "",
+  ) => {
     try {
-      const { data } = await axios.get(`${api}/api/mensaje/group/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
+      isLoading.value = true;
+      const { data } = await axios.get(
+        `${api}/api/mensaje/group/${currentCluster.value}?fechaInicio=${startDate}&fechaFin=${endDate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
+          },
         },
-      });
+      );
 
       if (!data?.data) return;
       currentCluster.value = id;
 
       messages.value = data.data.map(mapToJsonEntityMessage);
+    } catch (error) {
+      notification("Error al obtener mensajes", "error");
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const getAllMessagesClusterByClave = async (clave: string) => {
+    try {
+      const { data } = await axios.get(
+        `${api}/api/mensaje/group/clave/${clave}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("bearerToken")}`,
+          },
+        },
+      );
+
+      if (!data?.data) return;
+      console.log(data.data);
     } catch (error) {
       notification("Error al obtener mensajes", "error");
     }
@@ -74,6 +104,33 @@ const useMessageStore = defineStore("message", () => {
         message.groupIdStr,
       );
     }
+  };
+
+  const exportarJSON = async (startDate: string = "", endDate: string = "") => {
+    const inicio = startDate ? new Date(startDate).toISOString() : "";
+    let fin;
+    if (endDate && typeof fin === "object") {
+      fin = new Date(endDate);
+      fin.setHours(23, 59, 59, 999);
+      fin = fin.toISOString();
+    }
+
+    await getAllMessagesCluster(currentCluster.value, inicio, fin);
+
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(messages.value, null, 2)),
+    );
+    element.setAttribute(
+      "download",
+      `grupo_${clusterStore.cluster.clave}.json`,
+    );
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   // Funciones para manejar respuestas
@@ -119,6 +176,7 @@ const useMessageStore = defineStore("message", () => {
     currentCluster,
     replyingToMessage,
     getAllMessagesCluster,
+    getAllMessagesClusterByClave,
     registerMessage,
     addAnswerToMessage,
     replyToMessage,
@@ -126,6 +184,8 @@ const useMessageStore = defineStore("message", () => {
     getRepliedMessage,
     isReplyingToMessage,
     sendMessage,
+    exportarJSON,
+    isLoading,
   };
 });
 

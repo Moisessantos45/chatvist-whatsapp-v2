@@ -1,53 +1,50 @@
 <template>
   <!-- Overlay del modal -->
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" @click="$emit('close')">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 transition-opacity" @click="$emit('close')">
     <!-- Contenido del modal -->
-    <div class="bg-white rounded-2xl shadow-2xl p-8 w-96 max-w-[90vw] transform transition-all duration-300 scale-100"
+    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 w-full max-w-[400px] transform transition-all"
       @click.stop>
       <!-- Header -->
       <div class="text-center mb-8">
         <div
-          class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Users class="w-8 h-8 text-white" />
+          class="w-14 h-14 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
+          <Users class="w-7 h-7 text-whatsapp-dark-blue" stroke-width="1.5" />
         </div>
-        <h2 class="text-2xl font-bold text-gray-800">Unirse a Grupo</h2>
-        <p class="text-gray-500 mt-2">Ingresa el código del grupo al que deseas unirte</p>
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Unirse a Grupo</h2>
+        <p class="text-sm text-gray-500 mt-2">Ingresa la clave para acceder al chat</p>
       </div>
 
       <!-- Formulario -->
       <form @submit.prevent="handleSubmit">
-        <div class="mb-6">
-          <label for="groupCode" class="block text-sm font-semibold text-gray-700 mb-3">
-            Código del Grupo
+        <div class="mb-8">
+          <label for="groupCode" class="block text-[13px] font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+            Clave del Grupo
           </label>
           <div class="relative">
             <input id="groupCode" v-model="groupCode" type="text" placeholder="Ej: ABC123XYZ"
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-0 focus:outline-none transition-all duration-200 text-center text-lg font-mono tracking-wider"
-              :class="{ 'border-red-300 bg-red-50': hasError }" required />
+              class="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200 rounded-xl focus:bg-white focus:border-whatsapp-dark-blue focus:ring-1 focus:ring-whatsapp-dark-blue transition-all duration-200 text-center text-lg font-mono tracking-wider placeholder-gray-400 text-gray-900"
+              :class="{ 'border-red-300 bg-red-50/50 focus:border-red-500 focus:ring-red-500 focus:bg-white': hasError }" required />
             <div v-if="hasError" class="absolute right-3 top-1/2 transform -translate-y-1/2">
               <AlertCircle class="w-5 h-5 text-red-500" />
             </div>
           </div>
-          <p v-if="hasError" class="text-red-500 text-sm mt-2 flex items-center">
-            <AlertCircle class="w-4 h-4 mr-1" />
+          <p v-if="hasError" class="text-red-500 text-[13px] font-medium mt-2 flex items-center justify-center">
+            <AlertCircle class="w-4 h-4 mr-1.5" />
             {{ errorMessage }}
-          </p>
-          <p v-else class="text-gray-500 text-sm mt-2">
-            El código debe ser proporcionado por el administrador del grupo
           </p>
         </div>
 
         <!-- Botones -->
         <div class="flex space-x-3">
           <button type="button" @click="$emit('close')"
-            class="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-700 font-semibold transition-all duration-200">
+            class="flex-1 px-4 py-3.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl text-gray-700 font-semibold transition-all duration-200 shadow-sm active:scale-[0.98]">
             Cancelar
           </button>
           <button type="submit" :disabled="!groupCode.trim() || isLoading"
-            class="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+            class="flex-1 px-4 py-3.5 bg-whatsapp-dark-blue hover:bg-whatsapp-dark-blue/90 rounded-xl text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgb(0,0,0,0.2)] active:scale-[0.98] flex items-center justify-center">
             <span v-if="!isLoading">Unirse</span>
             <div v-else class="flex items-center">
-              <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
               Verificando...
             </div>
           </button>

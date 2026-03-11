@@ -1,97 +1,97 @@
 <template>
   <!-- Overlay del modal -->
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" @click="$emit('close')">
+  <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 transition-opacity" @click="$emit('close')">
     <!-- Contenido del menú -->
     <div
-      class="bg-white rounded-2xl shadow-2xl p-6 md:w-6/12 transform transition-all duration-300 scale-100"
+      class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-md transform transition-all"
       @click.stop>
       <!-- Header -->
-      <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Opciones</h2>
-        <p class="text-gray-500 mt-1">Selecciona una acción</p>
+      <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">Opciones</h2>
+        <button @click="$emit('close')" class="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600">
+           <span class="sr-only">Cerrar</span>
+           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
       </div>
 
       <!-- Opciones del menú -->
-      <div class="space-y-3 md:grid md:grid-cols-2 md:gap-2">
+      <div class="py-2 flex flex-col">
         <button @click="$emit('new-group')"
-          class="w-full flex items-center p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all duration-200 group">
+          class="w-full flex items-center px-6 py-3.5 hover:bg-gray-50 transition-colors group text-left">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
-            <Users class="w-6 h-6 text-white" />
+            class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+            <Users class="w-5 h-5 text-gray-600" />
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-blue-700">Nuevo Grupo</h3>
-            <p class="text-sm text-gray-500">Crear un grupo de chat</p>
+          <div class="flex-1">
+            <h3 class="font-medium text-gray-900">Nuevo Grupo</h3>
+            <p class="text-[13px] text-gray-500">Crear un grupo de chat</p>
           </div>
         </button>
 
         <button @click="$emit('join-group')"
-          class="w-full flex items-center p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-200 group">
+          class="w-full flex items-center px-6 py-3.5 hover:bg-gray-50 transition-colors group text-left">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
-            <UserPlus class="w-6 h-6 text-white" />
+            class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+            <UserPlus class="w-5 h-5 text-gray-600" />
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-green-700">Unirse a Grupo</h3>
-            <p class="text-sm text-gray-500">Ingresar con código de grupo</p>
+          <div class="flex-1">
+            <h3 class="font-medium text-gray-900">Unirse a Grupo</h3>
+            <p class="text-[13px] text-gray-500">Ingresar con código de grupo</p>
           </div>
         </button>
 
         <button @click="$emit('new-contact')"
-          class="w-full flex items-center p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all duration-200 group">
+          class="w-full flex items-center px-6 py-3.5 hover:bg-gray-50 transition-colors group text-left">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
-            <UserPlus class="w-6 h-6 text-white" />
+            class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+            <UserPlus class="w-5 h-5 text-gray-600" />
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-purple-700">Nuevo Contacto</h3>
-            <p class="text-sm text-gray-500">Agregar un nuevo contacto</p>
+          <div class="flex-1">
+            <h3 class="font-medium text-gray-900">Nuevo Contacto</h3>
+            <p class="text-[13px] text-gray-500">Agregar un nuevo contacto</p>
           </div>
         </button>
 
         <button @click="$emit('settings')"
-          class="w-full flex items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 group">
+          class="w-full flex items-center px-6 py-3.5 hover:bg-gray-50 transition-colors group text-left">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center mr-4">
-            <Settings class="w-6 h-6 text-white" />
+            class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+            <Settings class="w-5 h-5 text-gray-600" />
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-gray-700">Ajustes</h3>
-            <p class="text-sm text-gray-500">Configurar la aplicación</p>
+          <div class="flex-1">
+            <h3 class="font-medium text-gray-900">Ajustes</h3>
+            <p class="text-[13px] text-gray-500">Configurar la aplicación</p>
           </div>
         </button>
 
         <!-- Admin Panel (solo visible para admins) -->
-        <button v-if="userStore.user.isAdmin" @click="$emit('admin-panel')"
-          class="w-full flex items-center p-4 rounded-xl bg-orange-50 hover:bg-orange-100 transition-all duration-200 group">
-          <div
-            class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center mr-4">
-            <Shield class="w-6 h-6 text-white" />
-          </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-orange-700">Panel de Admin</h3>
-            <p class="text-sm text-gray-500">Gestionar usuarios y grupos</p>
-          </div>
-        </button>
-        <div class="border-t border-gray-200"></div>
+        <template v-if="userStore.user.isAdmin">
+            <div class="h-px bg-gray-100 my-1 mx-6"></div>
+            <button @click="$emit('admin-panel')"
+            class="w-full flex items-center px-6 py-3.5 hover:bg-gray-50 transition-colors group text-left">
+            <div
+                class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-gray-200 transition-all">
+                <Shield class="w-5 h-5 text-gray-600" />
+            </div>
+            <div class="flex-1">
+                <h3 class="font-medium text-gray-900">Panel de Admin</h3>
+                <p class="text-[13px] text-gray-500">Gestionar usuarios y grupos</p>
+            </div>
+            </button>
+        </template>
+        
+        <div class="h-px bg-gray-100 my-1 mx-6"></div>
+        
         <button @click="$emit('logout')"
-          class="w-full flex items-center p-4 rounded-xl bg-red-50 hover:bg-red-100 transition-all duration-200 group">
+          class="w-full flex items-center px-6 py-3.5 hover:bg-red-50/50 transition-colors group text-left">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mr-4">
-            <UserPlus class="w-6 h-6 text-white" />
+            class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-red-100 transition-all">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-800 group-hover:text-red-700">Cerrar Sesión</h3>
-            <p class="text-sm text-gray-500">Salir de la cuenta actual</p>
+          <div class="flex-1">
+            <h3 class="font-medium text-red-600">Cerrar Sesión</h3>
+            <p class="text-[13px] text-red-500/70">Salir de la cuenta actual</p>
           </div>
-        </button>
-      </div>
-
-      <!-- Botón de cerrar -->
-      <div class="mt-6 flex justify-center">
-        <button @click="$emit('close')"
-          class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-700 font-medium transition-all duration-200">
-          Cancelar
         </button>
       </div>
     </div>

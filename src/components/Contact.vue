@@ -1,23 +1,23 @@
 <template>
   <div :class="[
-    'bg-gradient-to-b from-slate-50 to-white shadow-lg flex flex-col transition-all duration-300',
-    cluster.clave && isMobile ? 'hidden' : 'w-full md:w-[30%]'
+    'bg-white border-r border-gray-200 flex flex-col transition-all duration-300',
+    cluster.clave && isMobile ? 'hidden' : 'w-full md:w-[350px] lg:w-[400px] shrink-0'
   ]">
     <!-- Header del sidebar -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-6 shadow-xl">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-white">Mensajes</h1>
+    <div class="bg-gray-50 border-b border-gray-200 px-5 pt-5 pb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Chats</h1>
         <button @click="showOptionsMenu = true"
-          class="p-3 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300 transform hover:scale-105">
-          <MoreVertical class="w-6 h-6 text-white" />
+          class="p-2 -mr-2 rounded-md hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer">
+          <MoreVertical class="w-5 h-5" />
         </button>
       </div>
 
       <!-- Barra de búsqueda -->
       <div class="relative">
-        <Search class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-300" />
-        <input v-model="searchQuery" type="text" placeholder="Buscar conversaciones..."
-          class="w-full pl-12 pr-4 py-3 bg-white/20 backdrop-blur-sm rounded-2xl border-none placeholder-blue-200 text-white focus:ring-2 focus:ring-white/40 focus:outline-none transition-all duration-300" />
+        <Search class="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" stroke-width="2.5" />
+        <input v-model="searchQuery" type="text" placeholder="Buscar o empezar un nuevo chat"
+          class="w-full pl-10 pr-4 py-2 bg-white rounded-lg border border-gray-200 placeholder-gray-400 text-sm text-gray-700 focus:border-gray-300 focus:ring-0 transition-colors" />
       </div>
     </div>
 

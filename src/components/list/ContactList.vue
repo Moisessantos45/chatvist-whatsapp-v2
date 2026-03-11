@@ -1,32 +1,30 @@
 <template>
     <!-- Lista de contactos -->
-    <div class="flex-1 overflow-y-auto px-2 pt-2">
+    <div class="flex-1 overflow-y-auto w-full">
         <div v-for="contact in filteredContacts" :key="contact.id" @click="selectContact(contact)" :class="[
-            'flex items-center p-4 mx-2 mb-2 hover:bg-blue-50 cursor-pointer transition-all duration-300 rounded-2xl group hover:shadow-md',
-            cluster?.id === contact.id ? 'bg-blue-50 shadow-lg ring-2 ring-blue-200' : 'hover:transform hover:scale-[1.02]'
+            'flex items-center px-5 py-3.5 cursor-pointer transition-colors w-full border-b border-gray-100 last:border-b-0',
+            cluster?.id === contact.id ? 'bg-[#F0F2F5]' : 'bg-white hover:bg-gray-50'
         ]">
             <!-- Avatar -->
-            <div class="relative mr-4">
+            <div class="relative mr-4 shrink-0">
                 <div
-                    class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    class="w-12 h-12 rounded-full bg-whatsapp-medium-blue flex items-center justify-center text-white font-semibold text-lg">
                     {{ contact.nombre.charAt(0).toUpperCase() }}
                 </div>
-
             </div>
 
             <!-- Información del contacto -->
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-2">
-                    <h3
-                        class="font-semibold text-gray-800 truncate text-lg group-hover:text-blue-700 transition-colors">
-                        {{
-                            contact.nombre }}</h3>
-                    <span class="text-sm text-gray-500 font-medium">{{ contact.nombre }}</span>
+            <div class="flex-1 min-w-0 border-b border-transparent">
+                <div class="flex items-center justify-between mb-0.5">
+                    <h3 class="font-medium text-gray-900 truncate text-base leading-tight">
+                        {{ contact.nombre }}
+                    </h3>
+                    <span class="text-xs text-gray-500 font-medium shrink-0 ml-2">12:34</span>
                 </div>
-                <div class="flex items-center justify-between" v-if="contact.messages.length > 0">
-                    <p class="text-gray-600 truncate">{{ contact.messages[0].contenido }}</p>
+                <div class="flex items-center justify-between text-sm" v-if="contact.messages.length > 0">
+                    <p class="text-gray-500 truncate leading-snug">{{ contact.messages[0].contenido }}</p>
                     <!-- <div v-if="contact.unreadCount > 0"
-                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-full px-3 py-1 min-w-[24px] text-center font-semibold shadow-lg">
+                        class="bg-whatsapp-light text-white text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 shrink-0 ml-2">
                         {{ contact.unreadCount }}
                     </div> -->
                 </div>

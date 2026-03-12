@@ -51,14 +51,14 @@
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-whatsapp-dark-blue"></div>
         </div>
 
-        <div ref="messagesContainer" @scroll="handleScroll" class="flex-1 overflow-y-auto px-5 py-6 z-10">
+        <div ref="messagesContainer" @scroll="handleScroll" class="flex-1 overflow-y-auto px-10 py-6 z-10">
           <div class="space-y-3">
             <div v-for="message in messages" :key="message.id" :class="[
               'flex',
               message.usuarioId === user.id ? 'justify-end' : 'justify-start'
             ]">
               <div :class="[
-                'max-w-[75%] rounded-lg px-3 py-2 shadow-sm relative group gap-2',
+                'max-w-[70%] w-fit rounded-lg px-3 py-2 shadow-sm relative group gap-2',
                 message.usuarioId === user.id
                   ? 'bg-whatsapp-dark-blue text-white rounded-tr-none'
                   : 'bg-[#1e2128] text-gray-100 rounded-tl-none',
@@ -66,13 +66,13 @@
               ]">
                 <!-- Mensaje al que se está respondiendo -->
                 <div v-if="message.respuestaId && message.respuestaId > 0"
-                  class="mb-2 p-2 rounded-md bg-black/5 border-l-4 border-whatsapp-medium-blue cursor-pointer transition-colors hover:bg-black/10">
+                  class="mb-2 p-2 rounded-md bg-black/5 border-l-4 border-whatsapp-medium-blue cursor-pointer transition-colors hover:bg-black/10 max-h-24 overflow-hidden">
                   <div v-if="getRepliedMessage(message.respuestaId)" class="text-xs">
                     <p class="text-gray-800 font-medium mb-1 truncate">
                       {{ getRepliedMessage(message.respuestaId)?.senderApodo ||
                         getRepliedMessage(message.respuestaId)?.usuario?.apodo || 'Usuario' }}
                     </p>
-                    <p class="text-gray-600 truncate">
+                    <p class="text-gray-600 line-clamp-2 break-words text-[11px] leading-tight">
                       {{ getRepliedMessage(message.respuestaId)?.contenido }}
                     </p>
                   </div>
@@ -87,11 +87,15 @@
                 </div>
 
                 <!-- Contenido del mensaje -->
-                <p class="text-[13px] leading-relaxed break-words py-2 px-3">{{ message.contenido }}</p>
+                <p class="text-[13px] leading-relaxed break-words py-2 px-3 whitespace-pre-wrap">{{ message.contenido }}</p>
 
-                <!-- Botón de respuesta (aparece al hover) -->
+                <!-- Botón de respuesta -->
                 <button @click="replyToMessage(message.id)"
-                  class="absolute top-2 -right-10 p-1.5 rounded-full bg-[#1e2128] shadow-sm hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100 border border-gray-700">
+                  :class="[
+                    'absolute top-2 p-1.5 rounded-full bg-[#1e2128] shadow-sm transition-all border border-gray-700 hover:bg-white/10',
+                    message.usuarioId === user.id ? '-left-10' : '-right-10',
+                    isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  ]">
                   <Reply class="w-4 h-4 text-gray-400" />
                 </button>
 
@@ -125,13 +129,13 @@
         <div class="bg-[#13151a] px-4 py-3 border-t border-gray-800">
           <!-- Indicador de respuesta -->
           <div v-if="replyingToMessage"
-            class="mb-3 mx-2 relative overflow-hidden bg-[#1e2128] rounded-lg border-l-4 border-whatsapp-medium-blue shadow-sm">
-            <div class="p-3 pr-10">
+            class="mb-3 mx-2 relative overflow-hidden bg-[#1e2128] rounded-lg border-l-4 border-whatsapp-medium-blue shadow-sm min-w-0 max-h-24">
+            <div class="p-3 pr-10 min-w-0">
               <p class="text-[13px] font-semibold text-whatsapp-light mb-1">
                 {{ getRepliedMessage(replyingToMessage)?.senderApodo ||
                   getRepliedMessage(replyingToMessage)?.usuario?.apodo || 'Usuario desconocido' }}
               </p>
-              <p class="text-sm text-gray-300 truncate">
+              <p class="text-sm text-gray-300 line-clamp-2 break-words leading-snug">
                 {{ getRepliedMessage(replyingToMessage)?.contenido }}
               </p>
             </div>
